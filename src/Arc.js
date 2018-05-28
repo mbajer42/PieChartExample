@@ -1,39 +1,39 @@
-import React, { Component, PropTypes } from 'react';
-import {
-  ART
-} from 'react-native';
-
-const {
-  Shape
-} = ART;
-
+import React from 'react';
+import PropTypes from 'prop-types';
+import {ART} from 'react-native';
 import * as d3 from 'd3';
 
-export default class Arc extends Component {
+const {
+    Shape
+} = ART;
 
-  constructor(props) {
-    super(props);
-    this.arc = d3
-                .arc()
-                .outerRadius(this.props.outerRadius)
-                .innerRadius(this.props.innerRadius)
-                (this.props.arcData);
-  }
+const Arc = ({arcData, color, innerRadius, outerRadius}) => {
 
-  static defaultProps = {
-    color: '#000'
-  }
+    const arc = d3
+        .arc()
+        .outerRadius(outerRadius)
+        .innerRadius(innerRadius)
+        (arcData);
 
-  static propTypes = {
+    return (
+        <Shape
+            d={arc}
+            fill={color}
+            stroke='#000'
+            strokeWidth={1}
+        />
+    );
+};
+
+Arc.propTypes = {
     color: PropTypes.string,
     outerRadius: PropTypes.number.isRequired,
     innerRadius: PropTypes.number.isRequired,
     arcData: PropTypes.object.isRequired
-  }
+};
 
-  render() {
-    return (
-      <Shape d={this.arc} stroke='#000' strokeWidth={1} fill={this.props.color} />
-    );
-  }
-}
+Arc.defaultProps = {
+    color: '#000'
+};
+
+export default Arc;

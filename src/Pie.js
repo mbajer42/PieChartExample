@@ -1,67 +1,65 @@
-import React, { Component, PropTypes } from 'react';
-import {
-  ART,
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import React from 'react';
+import PropTypes from 'prop-types';
+import {ART, View} from 'react-native';
 import * as d3 from 'd3';
-
-const {
-  Group,
-  Surface
-} = ART;
-
 import Arc from './Arc';
 
-export default class Pie extends Component {
+const {
+    Group,
+    Surface
+} = ART;
 
-  constructor(props) {
-    super(props);
-    this.colors = d3.schemeCategory10;
-    this.arcs = d3
-                .pie()
-                .value(this.props.valueMap)
-                .padAngle(this.props.padAngle)
-                (this.props.data);
-    this.getArc = this.getArc.bind(this);
-  };
+const Pie = ({data, innerRadius, outerRadius, padAngle, valueMap}) => {
 
-  static defaultProps = {
+    const colors = d3.schemeCategory10;
+
+    const arcs = d3
+        .pie()
+        .value(valueMap)
+        .padAngle(padAngle)
+        (data);
+
+    const arc = (arcData, index) => {
+        return (
+            <Arc
+                key={`arc-${index}`}
+                arcData={arcData}
+                color={colors[index]}
+                innerRadius={innerRadius}
+                outerRadius={outerRadius}
+            />
+        );
+    };
+
+    return (
+        <View>
+            <Surface
+                height={2 * outerRadius}
+                width={2 * outerRadius}
+            >
+                <Group x={outerRadius} y={outerRadius}>
+                    {arcs.map((arcData, index) => arc(arcData, index))}
+                </Group>
+            </Surface>
+        </View>
+    );
+
+};
+
+Pie.defaultProps = {
     innerRadius: 0,
-    valueMap: ((datum) => {return datum}),
+    valueMap: ((datum) => {
+        return datum
+    }),
     padAngle: 0.02
-  }
+};
 
-  static propTypes = {
+Pie.propTypes = {
     outerRadius: PropTypes.number.isRequired,
     data: PropTypes.array.isRequired,
     innerRadius: PropTypes.number,
     valueMap: PropTypes.func,
     padAngle: PropTypes.number
-  }
+};
 
-  getArc(arcData, index) {
-    return (
-      <Arc key={`arc-${index}`}
-            arcData={arcData}
-            outerRadius={this.props.outerRadius}
-            innerRadius={this.props.innerRadius}
-            color={this.colors[index]} />
-    );
-  }
-
-  render() {
-    return (
-      <View>
-        <Surface width={2*this.props.outerRadius}
-                height={2*this.props.outerRadius} >
-          <Group x={this.props.outerRadius} y={this.props.outerRadius}>
-                  { this.arcs.map((arcData,index) => this.getArc(arcData, index)) }
-          </Group>
-        </Surface>
-      </View>
-    );
-  }
-}
+export default Pie;
